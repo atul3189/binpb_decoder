@@ -5,6 +5,7 @@ A command line tool to decode binary protobuf (binpb) files using proto definiti
 ## Features
 
 - Decode binary protobuf files using `.proto` file definitions
+- **Recursive search** for `.proto` files in all subdirectories
 - Automatic proto file compilation using `protoc`
 - Support for multiple output formats (text, JSON)
 - Automatic message type detection
@@ -51,7 +52,7 @@ python binpb_decoder_advanced.py <proto_directory> <binpb_file>
 
 ### Examples
 
-**Decode a binary file using proto definitions:**
+**Decode a binary file using proto definitions (searches recursively):**
 ```bash
 python binpb_decoder_advanced.py ./protos ./data.binpb
 ```
@@ -83,7 +84,7 @@ python binpb_decoder_advanced.py ./protos ./data.binpb --keep-compiled
 
 ### Command Line Options
 
-- `proto_dir`: Directory containing `.proto` files
+- `proto_dir`: Directory containing `.proto` files (searched recursively)
 - `binpb_file`: Binary protobuf file to decode
 - `-m, --message-type`: Specific message type to use for decoding
 - `-f, --output-format`: Output format (text or json)
@@ -103,11 +104,12 @@ binpb_decoder/
 
 ## How It Works
 
-1. **Proto Compilation**: Uses `protoc` to compile `.proto` files to Python modules
-2. **Module Loading**: Dynamically loads compiled proto modules
-3. **Message Detection**: Identifies available message types from compiled modules
-4. **Binary Decoding**: Parses binary data using the appropriate message type
-5. **Output Formatting**: Formats decoded data in text or JSON format
+1. **Proto Discovery**: Recursively searches for `.proto` files in the specified directory and all subdirectories
+2. **Proto Compilation**: Uses `protoc` to compile `.proto` files to Python modules
+3. **Module Loading**: Dynamically loads compiled proto modules
+4. **Message Detection**: Identifies available message types from compiled modules
+5. **Binary Decoding**: Parses binary data using the appropriate message type
+6. **Output Formatting**: Formats decoded data in text or JSON format
 
 ## Example Proto File
 
@@ -147,6 +149,25 @@ python binpb_decoder_advanced.py ./protos ./data.binpb --keep-compiled
 This will show you where the compiled files are located so you can inspect them.
 
 ## Advanced Usage
+
+### Recursive Proto Search
+
+The tool now automatically searches for `.proto` files recursively in all subdirectories. This means you can organize your proto files in a hierarchical structure:
+
+```
+protos/
+├── common/
+│   ├── base.proto
+│   └── types.proto
+├── user/
+│   ├── profile.proto
+│   └── settings.proto
+└── product/
+    ├── catalog.proto
+    └── inventory.proto
+```
+
+Simply point the tool to the root `protos/` directory and it will find all `.proto` files automatically.
 
 ### Batch Processing
 

@@ -24,20 +24,20 @@ class ProtoLoader:
         self.loaded_messages = {}
         
     def load_proto_files(self):
-        """Load all .proto files from the specified directory."""
-        proto_files = list(self.proto_dir.glob("*.proto"))
+        """Load all .proto files from the specified directory and subdirectories recursively."""
+        proto_files = list(self.proto_dir.rglob("*.proto"))
         
         if not proto_files:
-            raise ValueError(f"No .proto files found in {self.proto_dir}")
+            raise ValueError(f"No .proto files found in {self.proto_dir} or its subdirectories")
             
-        click.echo(f"Found {len(proto_files)} proto files")
+        click.echo(f"Found {len(proto_files)} proto files recursively")
         
         for proto_file in proto_files:
             try:
                 self._compile_proto_file(proto_file)
-                click.echo(f"✓ Loaded {proto_file.name}")
+                click.echo(f"✓ Loaded {proto_file.relative_to(self.proto_dir)}")
             except Exception as e:
-                click.echo(f"✗ Failed to load {proto_file.name}: {e}")
+                click.echo(f"✗ Failed to load {proto_file.relative_to(self.proto_dir)}: {e}")
                 
     def _compile_proto_file(self, proto_file):
         """Compile a single proto file and add to descriptor pool."""
@@ -130,7 +130,7 @@ class BinpbDecoder:
               type=click.Path(file_okay=True, dir_okay=False),
               help='Output file to save decoded data')
 def main(proto_dir, binpb_file, message_type, output_format, output_file):
-    """Decode a binary protobuf file using proto definitions from a directory."""
+    """Decode a binary protobuf file using proto definitions from a directory and its subdirectories recursively."""
     
     try:
         # Load proto files

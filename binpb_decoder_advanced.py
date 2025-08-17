@@ -37,7 +37,7 @@ class ProtoCompiler:
             sys.exit(1)
     
     def compile_proto_files(self, proto_dir, output_dir=None):
-        """Compile proto files to Python modules."""
+        """Compile proto files to Python modules from the specified directory and subdirectories recursively."""
         if output_dir is None:
             output_dir = tempfile.mkdtemp(prefix="binpb_compiled_")
             
@@ -45,19 +45,19 @@ class ProtoCompiler:
         output_dir = Path(output_dir)
         output_dir.mkdir(exist_ok=True)
         
-        proto_files = list(proto_dir.glob("*.proto"))
+        proto_files = list(proto_dir.rglob("*.proto"))
         
         if not proto_files:
-            raise ValueError(f"No .proto files found in {proto_dir}")
+            raise ValueError(f"No .proto files found in {proto_dir} or its subdirectories")
             
-        click.echo(f"Compiling {len(proto_files)} proto files...")
+        click.echo(f"Compiling {len(proto_files)} proto files recursively...")
         
         for proto_file in proto_files:
             try:
                 self._compile_single_proto(proto_file, output_dir)
-                click.echo(f"✓ Compiled {proto_file.name}")
+                click.echo(f"✓ Compiled {proto_file.relative_to(proto_dir)}")
             except Exception as e:
-                click.echo(f"✗ Failed to compile {proto_file.name}: {e}")
+                click.echo(f"✗ Failed to compile {proto_file.relative_to(proto_dir)}: {e}")
                 
         return output_dir
     
@@ -214,7 +214,7 @@ class BinpbDecoder:
 @click.option('--list-messages', '-l', is_flag=True, help='List available message types')
 @click.option('--keep-compiled', is_flag=True, help='Keep compiled proto files after execution')
 def main(proto_dir, binpb_file, message_type, output_format, output_file, list_messages, keep_compiled):
-    """Decode a binary protobuf file using proto definitions from a directory."""
+    """Decode a binary protobuf file using proto definitions from a directory and its subdirectories recursively."""
     
     try:
         # Compile proto files

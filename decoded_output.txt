@@ -1,0 +1,19 @@
+  people {
+    name: "John Doe"
+    age: 30
+    email: "john.doe@example.com"
+    hobbies: "reading"
+    hobbies: "hiking"
+    hobbies: "coding"
+    gender: MALE
+  }
+  people {
+    name: "Jane Smith"
+    age: 25
+    email: "jane.smith@example.com"
+    hobbies: "painting"
+    hobbies: "yoga"
+    gender: FEMALE
+  }
+  title: "My Contacts"
+  created_date: "2024-01-15"
